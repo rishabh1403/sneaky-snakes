@@ -18,7 +18,6 @@ io.on("connection", function (socket) {
 
   socket.on("message", function (data) {
     console.log(data);
-    var replyData = "this is very good";
     console.log(sid);
     io.to('room1').emit("message", data);
   });
@@ -26,8 +25,6 @@ io.on("connection", function (socket) {
   socket.on("data", function (data) {
     io.emit("data", data);
   })
-
-
 
 })
 
