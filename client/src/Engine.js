@@ -1,8 +1,19 @@
+
+// dimensions
+const ROWS = 26, COLS = 26;
+
+// Ids for grid
+const EMPTY = 0, SNAKE = 1, FOOD = 2;
+
+//Ids for direction
+const LEFT = 0, UP = 1, RIGHT = 2, DOWN = 3;
+
+// keycodes
+const KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40;
+
 class Snake {
-
-  init(d, x, y) {
-
-    this.direction = d;
+  init(direction, x, y) {
+    this.direction = direction;
     this._queue = [];
     this.insert(x, y);
   }
@@ -17,39 +28,28 @@ class Snake {
 
 class Grid {
 
-  init(d, c, r) {
-      this.width = c;
-      this.height = r;
-      this._grid = [];
+  init(id, c, r) {
+    this.width = c;
+    this.height = r;
+    this._grid = [];
 
-      for (var x = 0; x < c; x++) {
-          this._grid.push([]);
-          for (var y = 0; y < r; y++) {
-              this._grid[x].push(d);
-          }
+    for (var x = 0; x < c; x++) {
+      this._grid.push([]);
+      for (var y = 0; y < r; y++) {
+        this._grid[x].push(id);
       }
+    }
   }
 
   set(val, x, y) {
-      this._grid[x][y] = val;
+    this._grid[x][y] = val;
   }
   get(x, y) {
-      return this._grid[x][y];
+    return this._grid[x][y];
   }
 }
 
 
-// dimensions
-const ROWS = 26, COLS = 26;
-
-// Ids for grid
-const EMPTY = 0, SNAKE = 1, FOOD = 2;
-
-//Ids for direction
-const LEFT = 0, UP = 1, RIGHT = 2, DOWN = 3;
-
-// keycodes
-const KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40;
 
 let canvas, ctx, keystate, frames, score;
 
@@ -119,13 +119,13 @@ function update() {
     ) {
       return init();
     }
-    let tail= null;
+    let tail = null;
     if (grid.get(nx, ny) === FOOD) {
       score++;
-       tail = { x: nx, y: ny }
+      tail = { x: nx, y: ny }
       setFood();
     } else {
-       tail = snake.remove();
+      tail = snake.remove();
       grid.set(EMPTY, tail.x, tail.y);
       tail.x = nx;
       tail.y = ny;
