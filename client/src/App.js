@@ -57,6 +57,28 @@ const KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40;
 
 let canvas, ctx, keystate, frames, score;
 
+socket.on("keyup", (data) => {
+  console.log(data);
+  delete keystate[data.keyCode]
+});
+
+socket.on("keydown", (evt) => {
+  keystate[evt.keyCode] = true
+})
+
+socket.on("setFood", (randpos) => {
+  for (var x = 0; x < grid.width; x++) {
+    for (var y = 0; y < grid.height; y++) {
+      if (grid.get(x, y) === FOOD) {
+        grid.set(EMPTY, x, y);
+      }
+    }
+  }
+  grid.set(FOOD, randpos.x, randpos.y);
+})
+
+
+// socket.on("grid", (data) => grid = data);
 function setFood() {
   var empty = [];
 
@@ -69,7 +91,8 @@ function setFood() {
   }
 
   var randpos = empty[Math.floor(Math.random() * empty.length)];
-  grid.set(FOOD, randpos.x, randpos.y);
+  socket.emit("setFood", randpos);
+  // grid.set(FOOD, randpos.x, randpos.y);
 }
 
 
@@ -181,12 +204,21 @@ class App extends Component {
     keystate = {};
 
     document.addEventListener("keydown", function (evt) {
-      keystate[evt.keyCode] = true
+      // keystate[evt.keyCode] = true
+      let data = {
+        keyCode: evt.keyCode
+      }
+      socket.emit("keydown", data);
     })
 
     document.addEventListener("keyup", function (evt) {
-      delete keystate[evt.keyCode];
+      // delete keystate[evt.keyCode];
+      let data = {
+        keyCode: evt.keyCode
+      }
+      socket.emit("keyup", data);
     })
+    // socket.emit("grid", grid);
     init();
     loop();
   }
