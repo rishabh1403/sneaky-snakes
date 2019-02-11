@@ -2,31 +2,23 @@ import React, { Component } from 'react';
 import constants from '../../utils/constants';
 import Snake from '../../utils/snake';
 
+const initialState = {
+  keyState: {},
+  frames: 0,
+  firstSnake: new Snake(),
+  firstScore: 0,
+};
+
 class GameEngine extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      keyState: {},
-      frames: 0,
-      firstSnake: new Snake(),
-      firstScore: 0,
-    };
+    this.state = initialState;
     this.updateGame = this.updateGame.bind(this);
+    this.initializeSnake = this.initializeSnake.bind(this);
   }
 
   componentDidMount() {
-    const {
-      width, height, setCellType, setFood,
-    } = this.props;
-
-    // Initialize First Snake
-    const firstSnakePosition = { x: Math.floor(width / 2), y: height - 1 };
-    const { firstSnake } = this.state;
-    firstSnake.init('yo', constants.UP, firstSnakePosition.x, firstSnakePosition.y);
-    setCellType(constants.SNAKE, firstSnakePosition.x, firstSnakePosition.y);
-    setTimeout(setFood, 0);
-    this.setState(() => ({ firstSnake }));
-
+    this.initializeSnake();
     document.addEventListener('keydown', (event) => {
       this.setState((prevState) => {
         const newKeyState = { ...prevState.keyState, [event.keyCode]: true };
@@ -91,6 +83,8 @@ class GameEngine extends Component {
         || getCellType(nextX, nextY) === constants.SNAKE
       ) {
         initGrid();
+        this.setState(() => initialState);
+        this.initializeSnake();
         return this.updateGame();
       }
       let tail = null;
@@ -116,6 +110,20 @@ class GameEngine extends Component {
         firstScore,
       };
     });
+  }
+
+  initializeSnake() {
+    const {
+      width, height, setCellType, setFood,
+    } = this.props;
+
+    // Initialize First Snake
+    const firstSnakePosition = { x: Math.floor(width / 2), y: height - 1 };
+    const { firstSnake } = this.state;
+    firstSnake.init('yo', constants.UP, firstSnakePosition.x, firstSnakePosition.y);
+    setCellType(constants.SNAKE, firstSnakePosition.x, firstSnakePosition.y);
+    setTimeout(setFood, 0);
+    this.setState(() => ({ firstSnake }));
   }
 
   render() {
